@@ -1,24 +1,36 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react'
 
 type CalendarTransaction = { name: string; category: string; date: string; amount: number; type: 'expense' | 'income' }
 
 export function InteractiveMoneyCalendar({ transactions }: { transactions: CalendarTransaction[] }) {
-  const today = new Date()
-  const [month, setMonth] = useState(today.getMonth())
-  const [year, setYear] = useState(today.getFullYear())
+  const [month, setMonth] = useState<number | null>(null)
+  const [year, setYear] = useState<number | null>(null)
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
+
+  useEffect(() => {
+    const today = new Date()
+    setMonth(today.getMonth())
+    setYear(today.getFullYear())
+  }, [])
+
+  const spendingByDay = useMemo(() => {
+    if (month === null || year === null) return {}
+    return transactions.reduce<Record<number, number>>((result, item) => {
+      if (item.type !== 'expense') return result
+      const date = new Date(item.date)
+      if (date.getMonth() === month && date.getFullYear() === year) result[date.getDate()] = (result[date.getDate()] || 0) + item.amount
+      return result
+    }, {})
+  }, [transactions, month, year])
+
+  if (month === null || year === null) return <section id="money-calendar" className="mt-7 min-h-[420px] rounded-2xl border border-[#e5eae6] bg-white p-6"><p className="text-sm font-semibold text-[#93a098]">Loading calendar…</p></section>
+
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = new Date(year, month, 1).getDay()
   const monthName = new Date(year, month, 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' })
-  const spendingByDay = useMemo(() => transactions.reduce<Record<number, number>>((result, item) => {
-    if (item.type !== 'expense') return result
-    const date = new Date(item.date)
-    if (date.getMonth() === month && date.getFullYear() === year) result[date.getDate()] = (result[date.getDate()] || 0) + item.amount
-    return result
-  }, {}), [transactions, month, year])
   const selectedExpenses = selectedDay ? transactions.filter((item) => item.type === 'expense' && new Date(item.date).getDate() === selectedDay && new Date(item.date).getMonth() === month && new Date(item.date).getFullYear() === year) : []
 
   function changeMonth(direction: number) {
