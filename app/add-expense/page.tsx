@@ -18,6 +18,8 @@ export default function AddExpensePage() {
   function submitExpense(event: React.FormEvent) {
     event.preventDefault()
     if (!form.name || !form.amount) return
+    const existing = JSON.parse(window.localStorage.getItem('pennywise-transactions') || '[]')
+    window.localStorage.setItem('pennywise-transactions', JSON.stringify([{ ...form, amount: Number(form.amount), type: 'expense', date: new Date(`${form.date}T12:00:00`).toISOString() }, ...existing]))
     setSaved(true)
   }
 
