@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Pennywise — Personal Finance Tracker',
+  description: 'A calm, clear way to track your daily spending and build better money habits.',
   generator: 'v0.app',
   icons: {
     icon: [
