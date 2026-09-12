@@ -7,6 +7,8 @@ import {
   Bell,
   CalendarDays,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CircleHelp,
   Coffee,
   CreditCard,
@@ -47,6 +49,7 @@ const navItems = [
   { label: 'Transactions', icon: CreditCard, href: '#transactions' },
   { label: 'Budgets', icon: Wallet, href: '#budgets' },
   { label: 'Reports', icon: CalendarDays, href: '#reports' },
+  { label: 'Add expense', icon: Plus, href: '/add-expense' },
 ]
 
 export default function Page() {
@@ -98,9 +101,11 @@ export default function Page() {
         </header>
 
         <div className="mx-auto max-w-[1320px] px-5 py-8 sm:px-8 lg:px-10">
-          <section id="overview" className="mb-9 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="mb-2 text-xs font-semibold text-[#93a098]">Monday, June 17, 2024</p><h1 className="text-[30px] font-bold tracking-[-0.04em] text-[#1c2922] sm:text-[34px]">Good morning, Jordan <span className="text-[#0e9f6e]">.</span></h1><p className="mt-2 text-sm text-[#829088]">Here&apos;s your financial snapshot for June.</p></div><button onClick={() => setShowForm(true)} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#0e9f6e] px-5 text-sm font-bold text-white shadow-[0_5px_12px_rgba(14,159,110,.18)] transition hover:bg-[#087f58]"><Plus size={18} /> Add expense</button></section>
+          <section id="overview" className="mb-9 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="mb-2 text-xs font-semibold text-[#93a098]">Monday, June 17, 2024</p><h1 className="text-[30px] font-bold tracking-[-0.04em] text-[#1c2922] sm:text-[34px]">Good morning, Jordan <span className="text-[#0e9f6e]">.</span></h1><p className="mt-2 text-sm text-[#829088]">Here&apos;s your financial snapshot for June.</p></div><div className="flex flex-wrap gap-3"><a href="/add-expense" className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#0e9f6e] px-5 text-sm font-bold text-white shadow-[0_5px_12px_rgba(14,159,110,.18)] transition hover:bg-[#087f58]"><Plus size={18} /> Add expense</a><button onClick={() => setShowForm(true)} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#dfe7e1] bg-white px-4 text-sm font-bold text-[#526159] hover:bg-[#f3f6f3]">Quick add</button></div></section>
 
           <section className="grid gap-4 md:grid-cols-3" aria-label="Financial summary"><SummaryCard label="Total balance" amount="$12,450.80" note="↑ 8.2% from last month" icon={Wallet} tone="green" /><SummaryCard label="Spent this month" amount="$1,842.35" note="↓ 4.6% from last month" icon={ArrowDownRight} tone="peach" /><SummaryCard label="Money in" amount="$4,200.00" note="↑ 12.0% from last month" icon={ArrowUpRight} tone="blue" /></section>
+
+          <MoneyCalendar />
 
           <section className="mt-7 grid gap-5 xl:grid-cols-[1.6fr_1fr]">
             <div id="reports" className="rounded-2xl border border-[#e5eae6] bg-white p-6 shadow-[0_2px_8px_rgba(25,55,40,.025)]"><div className="mb-8 flex items-start justify-between"><div><h2 className="text-[15px] font-bold">Spending overview</h2><p className="mt-1 text-xs text-[#93a098]">Your spending over the last 6 months</p></div><button className="flex items-center gap-2 rounded-lg border border-[#e5eae6] px-3 py-2 text-xs font-semibold text-[#68766e]">Last 6 months <ChevronDown size={13} /></button></div><div className="relative h-[220px] pl-9"><div className="absolute inset-x-0 top-0 flex flex-col justify-between text-[10px] text-[#a9b2ad]" style={{ height: '180px' }}><span>$4,000</span><span>$3,000</span><span>$2,000</span><span>$1,000</span><span>$0</span></div><div className="absolute inset-x-0 top-1 flex flex-col justify-between" style={{ height: '180px' }}>{[0,1,2,3,4].map((i) => <div key={i} className="border-t border-dashed border-[#edf0ed]" />)}</div><div className="absolute bottom-8 left-9 right-0 flex h-[168px] items-end justify-around gap-3"><ChartBar month="Jan" value="40%" /><ChartBar month="Feb" value="59%" /><ChartBar month="Mar" value="48%" /><ChartBar month="Apr" value="73%" active /><ChartBar month="May" value="63%" /><ChartBar month="Jun" value="83%" /></div></div></div>
@@ -121,4 +126,16 @@ function SummaryCard({ label, amount, note, icon: Icon, tone }: { label: string;
 function ChartBar({ month, value, active }: { month: string; value: string; active?: boolean }) { return <div className="flex h-full flex-1 flex-col items-center justify-end gap-2"><div className={`w-full max-w-10 rounded-t-md ${active ? 'bg-[#0e9f6e]' : 'bg-[#cdebdc]'}`} style={{ height: value }} /><span className={`text-[10px] ${active ? 'font-bold text-[#4d5c54]' : 'text-[#a0aaa4]'}`}>{month}</span></div> }
 function Budget({ label, spent, total, percent, color }: { label: string; spent: string; total: string; percent: number; color: string }) { return <div><div className="mb-2 flex justify-between text-xs"><span className="font-semibold text-[#536159]">{label}</span><span className="text-[#9aa49e]">{spent} <span className="text-[#c1c8c3]">/ {total}</span></span></div><div className="h-2 rounded-full bg-[#edf1ee]"><div className={`h-2 rounded-full ${color}`} style={{ width: `${percent}%` }} /></div></div> }
 function TransactionRow({ item }: { item: Transaction }) { const Icon = item.icon; return <div className="flex items-center gap-3 px-6 py-4"><span className={`grid size-9 place-items-center rounded-xl ${item.tone === 'mint' ? 'bg-[#e6f7ef] text-[#0e9f6e]' : item.tone === 'blue' ? 'bg-[#eaf2ff] text-[#6f91d7]' : item.tone === 'peach' ? 'bg-[#fff0e7] text-[#df8a58]' : 'bg-[#f0edff] text-[#958bdb]'}`}><Icon size={16} /></span><div className="min-w-0 flex-1"><p className="truncate text-xs font-bold text-[#35433c]">{item.name}</p><p className="mt-1 text-[11px] text-[#9aa49e]">{item.category} · {item.date}</p></div><p className={`text-sm font-bold ${item.type === 'income' ? 'text-[#19956b]' : 'text-[#35433c]'}`}>{item.type === 'income' ? '+' : '-'}${item.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p><button aria-label={`More options for ${item.name}`} className="text-[#aab2ad]"><MoreHorizontal size={16} /></button></div> }
+
+const dailySpending = [210, 84, 430, 1520, 1780, 960, 320, 125, 670, 1510, 84, 340, 1120, 1850, 430, 218, 90, 740, 1320, 1880, 280, 120, 560, 920, 1620, 310, 76, 440, 1210, 1820]
+
+function MoneyCalendar() {
+  const [month, setMonth] = useState(5)
+  const monthName = new Date(2024, month, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })
+  const daysInMonth = new Date(2024, month + 1, 0).getDate()
+  const firstDay = new Date(2024, month, 1).getDay()
+  const days = Array.from({ length: firstDay + daysInMonth }, (_, index) => index < firstDay ? null : index - firstDay + 1)
+
+  return <section id="money-calendar" className="mt-7 rounded-2xl border border-[#e5eae6] bg-white p-6 shadow-[0_2px_8px_rgba(25,55,40,.025)]"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><div className="flex items-center gap-2"><CalendarDays size={17} className="text-[#0e9f6e]" /><h2 className="text-[15px] font-bold">Money control calendar</h2></div><p className="mt-1 text-xs text-[#93a098]">Daily spending at a glance. Days over $1,500 are flagged red.</p></div><div className="flex items-center gap-3"><span className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6d7972]"><i className="size-2.5 rounded-full bg-[#65c994]" /> Under $1,500</span><span className="flex items-center gap-1.5 text-[11px] font-semibold text-[#6d7972]"><i className="size-2.5 rounded-full bg-[#f37b70]" /> Over $1,500</span></div></div><div className="mt-6 flex items-center justify-between border-b border-[#edf0ed] pb-4"><button aria-label="Previous month" onClick={() => setMonth((value) => (value + 11) % 12)} className="grid size-8 place-items-center rounded-lg border border-[#e5eae6] text-[#718078] hover:bg-[#f3f6f3]"><ChevronLeft size={15} /></button><h3 className="text-sm font-bold">{monthName}</h3><button aria-label="Next month" onClick={() => setMonth((value) => (value + 1) % 12)} className="grid size-8 place-items-center rounded-lg border border-[#e5eae6] text-[#718078] hover:bg-[#f3f6f3]"><ChevronRight size={15} /></button></div><div className="mt-4 grid grid-cols-7 gap-1.5 text-center">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => <span key={day} className="pb-2 text-[10px] font-bold uppercase tracking-wide text-[#a0aaa4]">{day}</span>)}{days.map((day, index) => day === null ? <span key={`empty-${index}`} /> : <button key={day} title={`June ${day}: $${dailySpending[day - 1].toLocaleString()}`} className={`group relative flex min-h-12 flex-col items-center justify-center rounded-xl border text-xs font-bold transition hover:-translate-y-0.5 hover:shadow-sm ${dailySpending[day - 1] > 1500 ? 'border-[#ffd0ca] bg-[#fff0ee] text-[#c9514e]' : 'border-[#ccebd9] bg-[#effaf3] text-[#388966]'}`}><span>{day}</span><span className="mt-1 text-[9px] font-semibold opacity-75">${dailySpending[day - 1]}</span></button>)}</div></section>
+}
 
